@@ -1,0 +1,20 @@
+const { upgradeProxy } = require("@openzeppelin/truffle-upgrades");
+
+const GHDTokenV2 = artifacts.require("GHDTokenV2");
+const GHDTokenV3 = artifacts.require("GHDTokenV3");
+
+module.exports = async function (deployer) {
+  const ghdv2 = await GHDTokenV2.deployed();
+
+  const v2 = await ghdv2.version();
+  console.log("Previous version:", { address: ghdv2.address, version: v2 });
+
+  const ghdv3 = await upgradeProxy(ghdv2.address, GHDTokenV3, { deployer });
+
+  const v3 = await ghdv3.version();
+  console.log("Upgraded to:", {
+    old_address: ghdv2.address,
+    new_address: ghdv3.address,
+    version: v3,
+  });
+};
